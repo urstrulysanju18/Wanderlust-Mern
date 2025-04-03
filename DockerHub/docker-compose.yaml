@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  mongodb:
+    container_name: mongo-service
+    image: mongo:latest
+    volumes:
+      - ../backend/data:/data
+    ports:
+      - "27017:27017"
+
+  backend:
+    container_name: backend
+    image: sanjaybala18/wanderlustmega:backend  # Use prebuilt image
+    env_file:
+      - ../backend/.env.docker
+    ports:
+      - "5001:8080"
+    depends_on:
+      - mongodb
+
+  frontend:
+    container_name: frontend
+    image: sanjaybala18/wanderlustmega:frontend  # Use prebuilt image
+    env_file:
+      - ../frontend/.env.docker
+    ports:
+      - "3000:5173"
+
+  redis:
+    container_name: redis-service
+    restart: unless-stopped
+    image: redis:7.0.5-alpine 
+    expose:
+      - 6379
+    depends_on:
+      - mongodb
+
+volumes:
+  data:
